@@ -1,14 +1,18 @@
 # Unit Tests - Barangay Complaint System
 
 def validate_complaint(title, description, category):
-    if not title or not description or not category:
-        return False
+    if not title:
+        raise ValueError("Title is required")
+    if not description:
+        raise ValueError("Description is required")
+    if not category:
+        raise ValueError("Category is required")
     if len(title) < 5:
-        return False
+        raise ValueError("Title must be at least 5 characters")
     return True
 
 def calculate_risk_score(likelihood, impact):
-    return likelihood * impact  # FIXED
+    return likelihood * impact
 
 def get_complaint_status(status_code):
     statuses = {
@@ -36,8 +40,12 @@ def assign_severity(risk_score):
 def test_valid_complaint():
     assert validate_complaint("Noise Complaint", "Loud music at night", "Noise") == True
 
-def test_invalid_complaint_missing_field():
-    assert validate_complaint("", "Loud music at night", "Noise") == False
+def test_invalid_complaint_missing_title():
+    try:
+        validate_complaint("", "Loud music at night", "Noise")
+        assert False
+    except ValueError as e:
+        assert str(e) == "Title is required"
 
 def test_risk_score_calculation():
     assert calculate_risk_score(4, 5) == 20
